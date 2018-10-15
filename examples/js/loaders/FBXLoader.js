@@ -797,14 +797,16 @@ THREE.FBXLoader = ( function () {
 				var modelNode = modelNodes[ model.ID ];
 				self.setLookAtProperties( model, modelNode );
 
-				var parentConnections = connections.get( model.ID ).parents;
+				if(connections.get( model.ID )) {
+					var parentConnections = connections.get( model.ID ).parents;
 
-				parentConnections.forEach( function ( connection ) {
-
-					var parent = modelMap.get( connection.ID );
-					if ( parent !== undefined ) parent.add( model );
-
-				} );
+					parentConnections.forEach( function ( connection ) {
+	
+						var parent = modelMap.get( connection.ID );
+						if ( parent !== undefined ) parent.add( model );
+	
+					} );
+				}
 
 				if ( model.parent === null ) {
 
@@ -891,41 +893,44 @@ THREE.FBXLoader = ( function () {
 
 			var bone = null;
 
-			relationships.parents.forEach( function ( parent ) {
+			if (relationships && relationships.parents) {
+				relationships.parents.forEach(function (parent) {
 
-				for ( var ID in skeletons ) {
+					for (var ID in skeletons) {
 
-					var skeleton = skeletons[ ID ];
+						var skeleton = skeletons[ID];
 
-					skeleton.rawBones.forEach( function ( rawBone, i ) {
+						skeleton.rawBones.forEach(function (rawBone, i) {
 
-						if ( rawBone.ID === parent.ID ) {
+							if (rawBone.ID === parent.ID) {
 
-							var subBone = bone;
-							bone = new THREE.Bone();
-							bone.matrixWorld.copy( rawBone.transformLink );
+								var subBone = bone;
+								bone = new THREE.Bone();
+								bone.matrixWorld.copy(rawBone.transformLink);
 
-							// set name and id here - otherwise in cases where "subBone" is created it will not have a name / id
-							bone.name = THREE.PropertyBinding.sanitizeNodeName( name );
-							bone.ID = id;
+								// set name and id here - otherwise in cases where "subBone" is created it will not have a name / id
+								bone.name = THREE.PropertyBinding.sanitizeNodeName(name);
+								bone.ID = id;
 
-							skeleton.bones[ i ] = bone;
+								skeleton.bones[i] = bone;
 
-							// In cases where a bone is shared between multiple meshes
-							// duplicate the bone here and and it as a child of the first bone
-							if ( subBone !== null ) {
+								// In cases where a bone is shared between multiple meshes
+								// duplicate the bone here and and it as a child of the first bone
+								if (subBone !== null) {
 
-								bone.add( subBone );
+									bone.add(subBone);
+
+								}
 
 							}
 
-						}
+						});
 
-					} );
+					}
 
-				}
+				});
 
-			} );
+			}
 
 			return bone;
 
