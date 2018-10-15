@@ -886,8 +886,8 @@ THREE.GLTFExporter.prototype = {
 
 			if ( material.isMeshBasicMaterial ||
 				material.isLineBasicMaterial ||
-				material.isPointsMaterial ) {
-
+				material.isPointsMaterial ||
+				material.isShadowMaterial) {
 			} else {
 
 				// emissiveFactor
