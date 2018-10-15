@@ -27,7 +27,7 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 	var scope = this;
 
 	function activate() {
-
+		console.log('DragControls activate');
 		_domElement.addEventListener( 'mousemove', onDocumentMouseMove, false );
 		_domElement.addEventListener( 'mousedown', onDocumentMouseDown, false );
 		_domElement.addEventListener( 'mouseup', onDocumentMouseCancel, false );
@@ -83,7 +83,7 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 
 		_raycaster.setFromCamera( _mouse, _camera );
 
-		var intersects = _raycaster.intersectObjects( _objects );
+		var intersects = _raycaster.intersectObjects( _objects, true );
 
 		if ( intersects.length > 0 ) {
 
@@ -121,8 +121,10 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 
 		_raycaster.setFromCamera( _mouse, _camera );
 
-		var intersects = _raycaster.intersectObjects( _objects );
+		var intersects = _raycaster.intersectObjects( _objects, true );
 
+		console.log('DragControls onDocumentMouseDown', _objects, intersects);
+		
 		if ( intersects.length > 0 ) {
 
 			_selected = intersects[ 0 ].object;
@@ -198,7 +200,7 @@ THREE.DragControls = function ( _objects, _camera, _domElement ) {
 
 		_raycaster.setFromCamera( _mouse, _camera );
 
-		var intersects = _raycaster.intersectObjects( _objects );
+		var intersects = _raycaster.intersectObjects( _objects, true );
 
 		if ( intersects.length > 0 ) {
 
