@@ -72,5 +72,6 @@
       "build/three.module.js"
     ],
     "directories": {}
-  }
+  },
+  "dependencies": {}
 }
