@@ -152,6 +152,12 @@ THREE.Lensflare = function () {
 
 	};
 
+	this.setSize = function(value) {
+		for(let elem of elements) {
+			elem.size *= value;
+		}
+	}
+
 	//
 
 	var scale = new THREE.Vector2();
