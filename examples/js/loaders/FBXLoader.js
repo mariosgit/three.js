@@ -617,7 +617,7 @@ THREE.FBXLoader = ( function () {
 
 			} );
 
-            console.log('parseParameters:', parameters);
+            // console.log('parseParameters:', parameters);
 
 			return parameters;
 
@@ -1187,7 +1187,7 @@ THREE.FBXLoader = ( function () {
 
 			} else {
 
-				material = new THREE.MeshPhongMaterial( { color: 0xcccccc } );
+				material = new THREE.MeshPhysicalMaterial( { color: 0xcccccc } );
 				materials.push( material );
 
 			}
