@@ -472,14 +472,14 @@ THREE.FBXLoader = ( function () {
 			switch ( type.toLowerCase() ) {
 
 				case 'phong':
-					material = new THREE.MeshPhongMaterial();
+					material = new THREE.MeshPhysicalMaterial(); // THREE.MeshPhongMaterial();
 					break;
 				case 'lambert':
-					material = new THREE.MeshLambertMaterial();
+					material = new THREE.MeshPhysicalMaterial(); //new THREE.MeshLambertMaterial();
 					break;
 				default:
 					console.warn( 'THREE.FBXLoader: unknown material type "%s". Defaulting to MeshPhongMaterial.', type );
-					material = new THREE.MeshPhongMaterial( { color: 0x3300ff } );
+					material = new THREE.MeshPhysicalMaterial(); //THREE.MeshPhongMaterial( { color: 0x3300ff } );
 					break;
 
 			}
@@ -495,7 +495,7 @@ THREE.FBXLoader = ( function () {
 		// Also parse the texture map and return any textures associated with the material
 		parseParameters: function ( materialNode, textureMap, ID ) {
 
-			var parameters = {};
+            var parameters = {};
 
 			if ( materialNode.BumpFactor ) {
 
@@ -549,17 +549,17 @@ THREE.FBXLoader = ( function () {
 			}
 			if ( materialNode.Shininess ) {
 
-				parameters.shininess = materialNode.Shininess.value;
+				parameters.roughness = materialNode.Shininess.value;
 
 			}
 			if ( materialNode.Specular ) {
 
-				parameters.specular = new THREE.Color().fromArray( materialNode.Specular.value );
+				// parameters.specular = new THREE.Color().fromArray( materialNode.Specular.value );
 
 			} else if ( materialNode.SpecularColor && materialNode.SpecularColor.type === 'Color' ) {
 
 				// The blender exporter exports specular color here instead of in materialNode.Specular
-				parameters.specular = new THREE.Color().fromArray( materialNode.SpecularColor.value );
+				// parameters.specular = new THREE.Color().fromArray( materialNode.SpecularColor.value );
 
 			}
 
@@ -616,6 +616,8 @@ THREE.FBXLoader = ( function () {
 				}
 
 			} );
+
+            console.log('parseParameters:', parameters);
 
 			return parameters;
 
@@ -801,10 +803,10 @@ THREE.FBXLoader = ( function () {
 					var parentConnections = connections.get( model.ID ).parents;
 
 					parentConnections.forEach( function ( connection ) {
-	
+
 						var parent = modelMap.get( connection.ID );
 						if ( parent !== undefined ) parent.add( model );
-	
+
 					} );
 				}
 
