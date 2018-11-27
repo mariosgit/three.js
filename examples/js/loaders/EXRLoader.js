@@ -1163,8 +1163,7 @@ THREE.EXRLoader.prototype._parser = function ( buffer ) {
 
 	} else {
 
-		throw 'Cannot decompress unsupported compression';
-
+		throw `Cannot decompress unsupported compression   ${EXRHeader.compression}`;
 	}
 
 	return {
