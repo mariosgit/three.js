@@ -789,7 +789,9 @@ THREE.GLTFExporter.prototype = {
 		 * @return {Integer}      Index of the processed material in the "materials" array
 		 */
 		function processMaterial( material ) {
-
+			if (!material) {
+				return null;
+			}
 			if ( cachedData.materials.has( material ) ) {
 
 				return cachedData.materials.get( material );
