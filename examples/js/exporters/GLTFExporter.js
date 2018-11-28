@@ -765,11 +765,11 @@ THREE.GLTFExporter.prototype = {
 
 				outputJSON.textures = [];
 
-			}
+            }
 
 			var gltfTexture = {
 
-				sampler: processSampler( map ),
+                sampler: processSampler( map ),
 				source: processImage( map.image, map.format, map.flipY )
 
 			};
@@ -857,7 +857,8 @@ THREE.GLTFExporter.prototype = {
 			}
 
 			// pbrMetallicRoughness.metallicRoughnessTexture
-			if ( material.metalnessMap || material.roughnessMap ) {
+            if ( material.metalnessMap && material.metalnessMap.image ||
+                 material.roughnessMap && material.roughnessMap.image) {
 
 				if ( material.metalnessMap === material.roughnessMap ) {
 
@@ -876,7 +877,7 @@ THREE.GLTFExporter.prototype = {
 			}
 
 			// pbrMetallicRoughness.baseColorTexture
-			if ( material.map ) {
+			if ( material.map && material.map.image ) {
 
 				gltfMaterial.pbrMetallicRoughness.baseColorTexture = {
 
@@ -902,7 +903,7 @@ THREE.GLTFExporter.prototype = {
 				}
 
 				// emissiveTexture
-				if ( material.emissiveMap ) {
+				if ( material.emissiveMap && material.emissiveMap.image ) {
 
 					gltfMaterial.emissiveTexture = {
 
@@ -915,7 +916,7 @@ THREE.GLTFExporter.prototype = {
 			}
 
 			// normalTexture
-			if ( material.normalMap ) {
+			if ( material.normalMap && material.normalMap.image ) {
 
 				gltfMaterial.normalTexture = {
 
@@ -938,7 +939,7 @@ THREE.GLTFExporter.prototype = {
 			}
 
 			// occlusionTexture
-			if ( material.aoMap ) {
+			if ( material.aoMap && material.aoMap.image ) {
 
 				gltfMaterial.occlusionTexture = {
 
