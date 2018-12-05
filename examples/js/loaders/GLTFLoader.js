@@ -334,8 +334,8 @@ THREE.GLTFLoader = ( function () {
 					break;
 
 				default:
-					throw new Error( 'THREE.GLTFLoader: Unexpected light type, "' + lightDef.type + '".' );
-
+                    console.error( 'THREE.GLTFLoader: Unexpected light type, "' + lightDef.type + '".' );
+                    throw new Error( 'THREE.GLTFLoader: Unexpected light type, "' + lightDef.type + '".' );
 			}
 
 			lightNode.decay = 2;
@@ -418,14 +418,15 @@ THREE.GLTFLoader = ( function () {
 			magic: THREE.LoaderUtils.decodeText( new Uint8Array( data.slice( 0, 4 ) ) ),
 			version: headerView.getUint32( 4, true ),
 			length: headerView.getUint32( 8, true )
-		};
+        };
+        // console.log('GLTFBinaryExtension header:', this.header);
 
 		if ( this.header.magic !== BINARY_EXTENSION_HEADER_MAGIC ) {
-
+            // console.error('THREE.GLTFLoader: Unsupported glTF-Binary header.');
 			throw new Error( 'THREE.GLTFLoader: Unsupported glTF-Binary header.' );
 
 		} else if ( this.header.version < 2.0 ) {
-
+            // console.error('THREE.GLTFLoader: Legacy binary file detected. Use LegacyGLTFLoader instead.');
 			throw new Error( 'THREE.GLTFLoader: Legacy binary file detected. Use LegacyGLTFLoader instead.' );
 
 		}
@@ -444,24 +445,35 @@ THREE.GLTFLoader = ( function () {
 			if ( chunkType === BINARY_EXTENSION_CHUNK_TYPES.JSON ) {
 
 				var contentArray = new Uint8Array( data, BINARY_EXTENSION_HEADER_LENGTH + chunkIndex, chunkLength );
-				this.content = THREE.LoaderUtils.decodeText( contentArray );
+                this.content = THREE.LoaderUtils.decodeText( contentArray );
 
 			} else if ( chunkType === BINARY_EXTENSION_CHUNK_TYPES.BIN ) {
 
 				var byteOffset = BINARY_EXTENSION_HEADER_LENGTH + chunkIndex;
 				this.body = data.slice( byteOffset, byteOffset + chunkLength );
 
-			}
+            } else {
+                console.warn('THREE.GLTFLoader: unknown chunkType', chunkType.toString(16));
+            }
 
 			// Clients must ignore chunks with unknown types.
 
+            if((chunkLength % 4) !== 0) {
+                chunkLength += (chunkLength % 4);
+            }
 			chunkIndex += chunkLength;
 
 		}
 
 		if ( this.content === null ) {
-
+            // console.error('THREE.GLTFLoader: JSON content not found.');
 			throw new Error( 'THREE.GLTFLoader: JSON content not found.' );
+
+		}
+
+		if ( this.body === null ) {
+            // console.error('THREE.GLTFLoader: body not found.');
+			throw new Error( 'THREE.GLTFLoader: body not found.' );
 
 		}
 
@@ -1807,9 +1819,12 @@ THREE.GLTFLoader = ( function () {
 	GLTFParser.prototype.loadBuffer = function ( bufferIndex ) {
 
 		var bufferDef = this.json.buffers[ bufferIndex ];
-		var loader = this.fileLoader;
+        var loader = this.fileLoader;
+
+        // console.log('GLTFParser.prototype.loadBuffer', bufferDef);
 
 		if ( bufferDef.type && bufferDef.type !== 'arraybuffer' ) {
+            // console.error('THREE.GLTFLoader: ' + bufferDef.type + ' buffer type is not supported.');
 
 			throw new Error( 'THREE.GLTFLoader: ' + bufferDef.type + ' buffer type is not supported.' );
 
@@ -1817,12 +1832,15 @@ THREE.GLTFLoader = ( function () {
 
 		// If present, GLB container is required to be the first buffer.
 		if ( bufferDef.uri === undefined && bufferIndex === 0 ) {
+            // console.log('THREE.GLTFLoader: ' + bufferIndex + ' GLB container with first buffer.',  this.extensions);
 
 			return Promise.resolve( this.extensions[ EXTENSIONS.KHR_BINARY_GLTF ].body );
 
 		}
 
-		var options = this.options;
+        var options = this.options;
+
+        // console.log('GLTFParser.prototype.loadBuffer 2 loading', bufferDef.uri);
 
 		return new Promise( function ( resolve, reject ) {
 
@@ -1844,9 +1862,11 @@ THREE.GLTFLoader = ( function () {
 	GLTFParser.prototype.loadBufferView = function ( bufferViewIndex ) {
 
 		var bufferViewDef = this.json.bufferViews[ bufferViewIndex ];
+        // console.log('GLTFParser.prototype.loadBufferView, index:', bufferViewIndex, this.json, bufferViewDef);
 
 		return this.getDependency( 'buffer', bufferViewDef.buffer ).then( function ( buffer ) {
 
+            // console.log('GLTFParser.prototype.loadBufferView,buffer:', buffer);
 			var byteLength = bufferViewDef.byteLength || 0;
 			var byteOffset = bufferViewDef.byteOffset || 0;
 			return buffer.slice( byteOffset, byteOffset + byteLength );

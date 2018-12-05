@@ -19,7 +19,11 @@ Object.defineProperties( InterleavedBufferAttribute.prototype, {
 
 		get: function () {
 
-			return this.data.count;
+            // return this.data.count;
+
+            // for interleaved arrays, the count must start at offset and divided by stride
+
+            return (this.data.array.length - this.offset) / this.data.stride;
 
 		}
 
