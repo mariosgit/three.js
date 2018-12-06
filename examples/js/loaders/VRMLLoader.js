@@ -1085,9 +1085,18 @@ THREE.VRMLLoader.prototype = {
 
 					}
 
-					return;
+                    return;
 
-				}
+				} else if ( /[Ii]nline/.exec( data.string ) ) {
+                    console.warn('VRMLLoader unhandled inline tag:', data.children[0]);
+                    object = new THREE.Object3D();
+                    object.userData = data.children[0];
+                    // object.name = /DEF\s+([^\s]+)/.exec( data.string )[ 1 ];
+					parent.add( object );
+                } else {
+                    console.warn('VRMLLoader unhandled tag:', data.string);
+                }
+
 
 				for ( var i = 0, l = data.children.length; i < l; i ++ ) {
 
