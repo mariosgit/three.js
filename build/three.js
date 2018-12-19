@@ -37436,10 +37436,13 @@
 
 		initMaterials: function ( materials, texturePath, crossOrigin ) {
 
-			var array = [];
+	        var array = [];
+
+	        console.log('Loader:initMaterials: ', materials, materials.length);
 
 			for ( var i = 0; i < materials.length; ++ i ) {
 
+	            console.log(`  ${i} `,  materials[ i ]);
 				array[ i ] = this.createMaterial( materials[ i ], texturePath, crossOrigin );
 
 			}
@@ -37878,7 +37881,10 @@
 				}
 
 				offset = 0;
-				zLength = vertices.length;
+	            zLength = 0;
+	            if (vertices) {
+	                zLength = vertices.length;
+	            }
 
 				while ( offset < zLength ) {
 
@@ -37893,7 +37899,10 @@
 				}
 
 				offset = 0;
-				zLength = faces.length;
+	            zLength = 0;
+	            if (faces) {
+	                zLength = faces.length;
+	            }
 
 				while ( offset < zLength ) {
 
@@ -38738,7 +38747,11 @@
 
 				}
 
-			}
+			} else {
+
+	            console.warn('ObjectLoader:parseMaterials no json', json);
+
+	        }
 
 			return materials;
 
