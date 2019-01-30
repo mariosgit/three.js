@@ -11764,20 +11764,21 @@
 
 		computeBoundingSphere: function () {
 
-			var box = new Box3();
-			var vector = new Vector3();
-
 			return function computeBoundingSphere() {
 
-				if ( this.boundingSphere === null ) {
+	            var box = new Box3();
+	            var vector = new Vector3();
+
+	            if ( this.boundingSphere === null ) {
 
 					this.boundingSphere = new Sphere();
 
 				}
 
-				var position = this.attributes.position;
+	            var position = this.attributes.position;
+	            // console.log('THREE.BufferGeometry.computeBoundingSphere(): ', this.attributes);
 
-				if ( position ) {
+				if ( position && position.count > 0 ) {
 
 					var center = this.boundingSphere.center;
 
@@ -11787,7 +11788,7 @@
 					// hoping to find a boundingSphere with a radius smaller than the
 					// boundingSphere of the boundingBox: sqrt(3) smaller in the best case
 
-					var maxRadiusSq = 0;
+	                var maxRadiusSq = 0;
 
 					for ( var i = 0, il = position.count; i < il; i ++ ) {
 
@@ -11795,8 +11796,7 @@
 						vector.y = position.getY( i );
 						vector.z = position.getZ( i );
 						maxRadiusSq = Math.max( maxRadiusSq, center.distanceToSquared( vector ) );
-
-					}
+	                }
 
 					this.boundingSphere.radius = Math.sqrt( maxRadiusSq );
 
@@ -24964,7 +24964,11 @@
 
 			get: function () {
 
-				return this.data.count;
+	            // return this.data.count;
+
+	            // for interleaved arrays, the count must start at offset and divided by stride
+
+	            return (this.data.array.length - this.offset) / this.data.stride;
 
 			}
 
