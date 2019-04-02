@@ -39,24 +39,28 @@ THREE.AfterimagePass = function ( damp ) {
 
 	} );
 
-	this.sceneComp = new THREE.Scene();
-	this.scene = new THREE.Scene();
-
 	this.camera = new THREE.OrthographicCamera( -1, 1, 1, -1, 0, 1 );
 	this.camera.position.z = 1;
 
 	var geometry = new THREE.PlaneBufferGeometry( 2, 2 );
 
+	this.sceneComp = new THREE.Scene();
 	this.quadComp = new THREE.Mesh( geometry, this.shaderMaterial );
 	this.sceneComp.add( this.quadComp );
 
-	var material = new THREE.MeshBasicMaterial( { 
+	this.scene = new THREE.Scene();
+	var material = new THREE.MeshBasicMaterial( {
 		map: this.textureComp.texture
 	} );
-
 	var quadScreen = new THREE.Mesh( geometry, material );
-	this.scene.add( quadScreen );
+    this.scene.add( quadScreen );
 
+    this.sceneClear = new THREE.Scene();
+    var matclear = new THREE.MeshBasicMaterial( {
+        color: "#000000"
+    } );
+    var quadClear = new THREE.Mesh( geometry, matclear );
+    this.sceneClear.add( quadClear );
 };
 
 THREE.AfterimagePass.prototype = Object.assign( Object.create( THREE.Pass.prototype ), {
@@ -67,22 +71,31 @@ THREE.AfterimagePass.prototype = Object.assign( Object.create( THREE.Pass.protot
 
 		this.uniforms[ "tOld" ].value = this.textureOld.texture;
 		this.uniforms[ "tNew" ].value = readBuffer.texture;
-
 		this.quadComp.material = this.shaderMaterial;
 
-		renderer.render( this.sceneComp, this.camera, this.textureComp );
+        // render with shader (textureOld + readBuffer) to textureComp
+        renderer.render( this.sceneComp, this.camera, this.textureComp );
+        // render textureComp to textureOld = copy
 		renderer.render( this.scene, this.camera, this.textureOld );
-		
+
+        // render textureComp to output
 		if ( this.renderToScreen ) {
-			
+
 			renderer.render( this.scene, this.camera );
-			
+
 		} else {
-			
-			renderer.render( this.scene, this.camera, writeBuffer, this.clear );
-			
+
+            renderer.render( this.scene, this.camera, writeBuffer, this.clear );
+
 		}
 
-	}
+    },
+
+    clearBufferOnce: function ( renderer ) {
+
+        renderer.render( this.sceneClear, this.camera, this.textureOld );
+        console.log('AfterimagePass:clearBufferOnce');
+
+    }
 
 } );
